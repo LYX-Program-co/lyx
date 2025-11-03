@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('loading-status');
         await Preloader.load((l, t) => status.textContent = `正在加载资源... (${Math.round(l/t*100)}%)`);
         
-        // --- 修正 ---
-        // 仅初始化音频管理器
         AudioManager.init(); 
         
         const state = await API.getState();
@@ -18,15 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
             GameState.setFreeSpins(state.freeSpinsRemaining);
         }
         
-        // 先显示容器
         document.getElementById('preloader').style.display = 'none';
         document.getElementById('game-container').style.display = 'flex';
         
-        // --- 修正 ---
-        // 在容器显示后，再初始化卷轴和线条，以确保 clientHeight 不为 0
         Reel.init(); 
         WinLines.init();
-        // --- 修正结束 ---
+        
+        // --- 新增：启动背景音乐 ---
+        AudioManager.playLoop('main');
+        // --- 新增结束 ---
     }
 
     btnSpin.addEventListener('click', async () => {
