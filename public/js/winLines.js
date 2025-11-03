@@ -24,7 +24,6 @@ const WinLines = {
     },
 
     clearLines: () => {
-        // 清除winning类
         document.querySelectorAll('.symbol').forEach(sym => sym.classList.remove('winning'));
         WinLines.ctx.clearRect(0, 0, WinLines.canvas.width, WinLines.canvas.height);
     },
@@ -35,22 +34,15 @@ const WinLines = {
         WinLines.ctx.lineWidth = 5;
         wins.forEach(w => {
             const coords = WinLines.PAYLINE_COORDS[w.line];
-            // 修复：高亮当前可见的3行符号（基于当前strip transform，近似取最后/前3个调整）
+            // 简化：加到所有符号的前3个（初始可见）
             for (let i = 0; i < w.count; i++) {
                 const reelId = `reel${i}`;
-                const reel = document.getElementById(reelId);
-                const strip = reel.querySelector('.symbol-strip');
-                const allSymbols = Array.from(strip.children);
-                // 近似：假设可见是中间3个，基于offset计算（简化：取总长-3到总长）
-                const visibleStart = allSymbols.length - 3;
-                const visibleSymbols = allSymbols.slice(visibleStart, visibleStart + 3);
-                const row = coords[i]; // 0=顶,1=中,2=底
-                if (visibleSymbols[row]) {
-                    visibleSymbols[row].classList.add('winning');
-                }
+                const symbols = Array.from(document.getElementById(reelId).querySelector('.symbol-strip').children);
+                const visible = symbols.slice(0, 3); // 前3个作为可见
+                const row = coords[i];
+                if (visible[row]) visible[row].classList.add('winning');
             }
 
-            // 绘制线条
             WinLines.ctx.beginPath();
             for (let i = 0; i < w.count; i++) {
                 const x = i * WinLines.symbolWidth + WinLines.symbolWidth / 2;
