@@ -29,17 +29,15 @@ const Reel = {
                     const sym = document.createElement('div');
                     sym.className = 'symbol';
                     sym.dataset.symbolId = id; // 用于动态背景
+                    sym.textContent = id; // 修复：fallback文本（无图片时显示ID）
                     sym.style.backgroundImage = `url(/assets/symbols/${id}.png)`; 
                     strip.appendChild(sym);
                 });
             }
             reel.appendChild(strip);
+            // 修复：初始位置，显示中间3个（偏移1个symbolHeight）
+            strip.style.transform = `translateY(-${Reel.symbolHeight}px)`;
         }
-        // 初始设置背景（如果需要动态）
-        document.querySelectorAll('.symbol').forEach(sym => {
-            const id = sym.dataset.symbolId;
-            sym.style.backgroundImage = `url(/assets/symbols/${id}.png)`;
-        });
     },
 
     spinAnimation: (matrix) => {
@@ -69,13 +67,14 @@ const Reel = {
                     targetIdx = Math.floor(Math.random() * (symbols.length - 2)); // 随机降级
                 }
 
-                // 计算偏移：随机起始长距离 + 目标
+                // 修复：计算偏移 - 目标是中行起始，减去1 * symbolHeight（显示上中下）
                 const symbolsPerCycle = Reel.REEL_STRIPS_VISUAL[i].length;
-                const randomCycles = Math.floor(Math.random() * 3) + Reel.ROLL_DISTANCE; // 随机12-14循环，增强随机感
-                const startOffset = 0; // 从0开始（column-reverse已反转）
-                const finalOffset = -(targetIdx + randomCycles * symbolsPerCycle) * Reel.symbolHeight;
+                const randomCycles = Math.floor(Math.random() * 3) + Reel.ROLL_DISTANCE; // 随机12-14循环
+                const startOffset = -(randomCycles * symbolsPerCycle * Reel.symbolHeight); // 长起始偏移
+                const finalOffset = -((targetIdx + randomCycles * symbolsPerCycle) * Reel.symbolHeight + Reel.symbolHeight); // +1 symbolHeight 居中
 
                 // 设置CSS变量
+                strip.style.setProperty('--start-offset', `${startOffset}px`);
                 strip.style.setProperty('--final-offset', `${finalOffset}px`);
 
                 // 添加滚动类：触发动画
@@ -84,7 +83,6 @@ const Reel = {
                 if (duration > maxDuration) maxDuration = duration;
 
                 setTimeout(() => {
-                    // 瞬移到起始（实际从0开始，无需瞬移）
                     strip.classList.add('spinning');
                     // 滚动中添加旋转类到所有符号
                     symbols.forEach(sym => sym.classList.add('spinning'));
