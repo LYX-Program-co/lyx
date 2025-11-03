@@ -6,7 +6,7 @@ const Preloader = {
         '/assets/500.png', 
         '/assets/501.png',
 
-        // 卷轴符号图片 (已确认 100-107, 300-302)
+        // 卷轴符号图片 (已确认为 11 个: 100-107, 300-302)
         '/assets/symbols/100.png', 
         '/assets/symbols/101.png', 
         '/assets/symbols/102.png',
@@ -19,7 +19,7 @@ const Preloader = {
         '/assets/symbols/301.png',
         '/assets/symbols/302.png',
         
-        // 音频文件 (路径 /assets/audios/ )
+        // 音频文件 (路径 /assets/audios/ 已确认)
         '/assets/audios/spin.wav', 
         '/assets/audios/stop.wav', 
         '/assets/audios/ui-click.wav',
@@ -44,7 +44,7 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     });
-                    // 修正: 即使音频加载失败，也 resolve，防止预加载器卡死
+                    // 容错处理：即使音频加载失败也继续，防止卡死
                     audio.addEventListener('error', () => {
                         console.error('Audio load failed (continuing):', url);
                         onProgress(++loaded, total);
@@ -58,7 +58,7 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     };
-                    // 修正: 即使图片加载失败，也 resolve，防止预加载器卡死
+                    // 容错处理：即使图片加载失败也继续
                     img.onerror = () => {
                         console.error('Image load failed (continuing):', url);
                         onProgress(++loaded, total);
