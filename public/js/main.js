@@ -7,14 +7,26 @@ document.addEventListener('DOMContentLoaded', () => {
     async function init() {
         const status = document.getElementById('loading-status');
         await Preloader.load((l, t) => status.textContent = `正在加载资源... (${Math.round(l/t*100)}%)`);
-        AudioManager.init(); Reel.init(); WinLines.init();
+        
+        // --- 修正 ---
+        // 仅初始化音频管理器
+        AudioManager.init(); 
+        
         const state = await API.getState();
         if (state) {
             GameState.setBalance(state.balance);
             GameState.setFreeSpins(state.freeSpinsRemaining);
         }
+        
+        // 先显示容器
         document.getElementById('preloader').style.display = 'none';
         document.getElementById('game-container').style.display = 'flex';
+        
+        // --- 修正 ---
+        // 在容器显示后，再初始化卷轴和线条，以确保 clientHeight 不为 0
+        Reel.init(); 
+        WinLines.init();
+        // --- 修正结束 ---
     }
 
     btnSpin.addEventListener('click', async () => {
