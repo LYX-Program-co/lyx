@@ -23,7 +23,9 @@ const Reel = {
                     const sym = document.createElement('div');
                     sym.className = 'symbol';
                     sym.style.height = `${Reel.symbolHeight}px`;
-                    sym.style.backgroundImage = `url(assets/symbols/${id}.png)`;
+                    // --- 修正：使用绝对路径 /assets/ ---
+                    sym.style.backgroundImage = `url(/assets/symbols/${id}.png)`;
+                    // --- 修正结束 ---
                     strip.appendChild(sym);
                 });
             }
