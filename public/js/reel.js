@@ -10,7 +10,8 @@ const Reel = {
         [100, 101, 102, 300, 103, 104, 105, 106, 107, 301, 302, 100]
     ],
 
-    SPIN_DURATION: 2000, STAGGER_DELAY: 200,
+    SPIN_DURATION: 2500, // 延长到2.5s，更明显滚动
+    STAGGER_DELAY: 200,
 
     init: () => {
         const grid = document.getElementById('reel-grid');
@@ -21,7 +22,7 @@ const Reel = {
             const strip = document.createElement('div');
             strip.className = 'symbol-strip';
             const visual = Reel.REEL_STRIPS_VISUAL[i];
-            for (let k = 0; k < 5; k++) {
+            for (let k = 0; k < 8; k++) { // 增加循环次数：更多符号=更长滚动
                 visual.forEach(id => {
                     const sym = document.createElement('div');
                     sym.className = 'symbol';
@@ -34,7 +35,7 @@ const Reel = {
         }
     },
 
-    // --- 冰妹: 重构 spinAnimation 以修复动画时序 (逻辑死锁) ---
+    // --- 冰妹: 重构 spinAnimation 以修复动画时序 (逻辑死锁) + 3D深度滚动 ---
     spinAnimation: (matrix) => {
         return new Promise(resolve => {
             let maxDuration = 0;
@@ -61,27 +62,30 @@ const Reel = {
                 }
 
                 const finalY = -targetIdx * Reel.symbolHeight;
-                const startY = -Reel.symbolHeight * 12; 
+                const startY = -Reel.symbolHeight * 24; // 双倍距离：超长滚动，明显“上下旋转”
 
                 // 1. 设置瞬移到起始位置 (无动画)
                 strip.style.transition = 'none';
-                strip.style.transform = `translateY(${startY}px)`;
+                strip.style.transform = `translateY(${startY}px) rotateX(0deg) translateZ(0px)`; // 3D起始
                 
                 const delay = i * Reel.STAGGER_DELAY;
                 const duration = Reel.SPIN_DURATION + delay;
                 if (duration > maxDuration) maxDuration = duration;
 
-                // 2. 强制浏览器在“下一帧”才应用动画
-                // 这是解决“瞬移”问题的 100% 可靠方法
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => { 
-                        strip.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
-                        strip.style.transform = `translateY(${finalY}px)`;
-                    });
-                });
+                // 2. 强制浏览器在“下一帧”才应用动画 + 3D滚动效果
+                setTimeout(() => { // 用setTimeout替换嵌套RAF，更可靠
+                    strip.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+                    strip.style.transform = `translateY(${finalY}px) rotateX(5deg) translateZ(50px)`; // 3D倾斜滚动
+                }, 50); // 微延迟，确保重绘
             }
             
-            setTimeout(() => { AudioManager.play('stop'); resolve(); }, maxDuration);
+            setTimeout(() => { 
+                AudioManager.play('stop'); 
+                // 结束时轻微震动整个grid
+                document.getElementById('reel-grid').classList.add('shake');
+                setTimeout(() => document.getElementById('reel-grid').classList.remove('shake'), 500);
+                resolve(); 
+            }, maxDuration);
         });
     }
     // --- 重构结束 ---
