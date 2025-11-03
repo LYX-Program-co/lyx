@@ -56,17 +56,18 @@ body {
     border-right: 1px solid #333;
     overflow: hidden;
     transform-style: preserve-3d; /* 每个卷轴3D */
-    display: flex;
-    flex-direction: column-reverse; /* 反向列：从下往上滚动 */
+    /* 修复：移除column-reverse，标准从上到下 */
 }
 .reel:last-child { border: none; }
 
 .symbol-strip {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* 标准列布局 */
     width: 100%;
     transform-style: preserve-3d;
     transition: none; /* 初始无动画 */
+    /* 修复：初始偏移，确保中间3个可见 */
+    transform: translateY(-100%);
 }
 
 .symbol {
@@ -80,6 +81,12 @@ body {
     transition: transform 0.2s ease, filter 0.3s ease;
     /* 基础3D倾斜 */
     transform: rotateX(10deg) translateZ(20px);
+    /* 修复：加fallback文本（无图片时显示ID） */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
     /* 滚动时模糊+辉光 */
     filter: blur(0px) drop-shadow(0 0 5px rgba(255,255,255,0.3));
 }
@@ -98,7 +105,7 @@ body {
     transform: rotateY(180deg) rotateX(10deg) translateZ(50px); /* hover 3D翻转 */
 }
 
-/* --- 新增：符号旋转keyframes (核心特效) --- */
+/* --- 符号旋转keyframes (核心特效) --- */
 @keyframes symbol-rotate {
     0% { transform: rotateY(0deg) rotateX(10deg) translateZ(20px); }
     100% { transform: rotateY(360deg) rotateX(10deg) translateZ(20px); }
@@ -107,7 +114,7 @@ body {
 /* 卷轴滚动keyframes：长距离+缓动 */
 @keyframes reel-spin {
     0% {
-        transform: translateY(0) rotateX(0deg) translateZ(0px); /* 起始 */
+        transform: translateY(var(--start-offset)) rotateX(0deg) translateZ(0px); /* 起始长偏移 */
     }
     100% {
         transform: translateY(var(--final-offset)) rotateX(5deg) translateZ(50px); /* 目标 + 3D倾斜 */
