@@ -27,7 +27,7 @@ const Preloader = {
         '/assets/audios/free-spin.wav', 
         '/assets/audios/jingle-trigger.wav',
         '/assets/audios/main.wav', 
-        '/assets/audios/win-small.wav' // 路径已从 _audios 修正
+        '/assets/audios/win-small.wav' // 路径已修正
     ],
     preloadedAssets: new Map(),
 
@@ -44,6 +44,7 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     });
+                    // 修正: 即使音频加载失败，也 resolve，防止预加载器卡死
                     audio.addEventListener('error', () => {
                         console.error('Audio load failed (continuing):', url);
                         onProgress(++loaded, total);
@@ -57,6 +58,7 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     };
+                    // 修正: 即使图片加载失败，也 resolve，防止预加载器卡死
                     img.onerror = () => {
                         console.error('Image load failed (continuing):', url);
                         onProgress(++loaded, total);
