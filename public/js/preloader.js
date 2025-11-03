@@ -1,13 +1,12 @@
 const Preloader = {
-    // 资源路径已统一为绝对路径 /assets/...
     ASSET_LIST: [
-        // 核心图片 (在 public/assets/ 目录下)
+        // 核心图片
         '/assets/8888.png', 
         '/assets/9999.png', 
         '/assets/500.png', 
         '/assets/501.png',
 
-        // 卷轴符号图片 (在 public/assets/symbols/ 目录下, 补全 104-110)
+        // 卷轴符号图片 (已移除 108, 109, 110)
         '/assets/symbols/100.png', 
         '/assets/symbols/101.png', 
         '/assets/symbols/102.png',
@@ -16,22 +15,20 @@ const Preloader = {
         '/assets/symbols/105.png', 
         '/assets/symbols/106.png', 
         '/assets/symbols/107.png', 
-        '/assets/symbols/108.png', 
-        '/assets/symbols/109.png', 
-        '/assets/symbols/110.png', 
+        // 108, 109, 110 已被删除
         '/assets/symbols/300.png',
         '/assets/symbols/301.png',
         '/assets/symbols/302.png',
         
-        // 音频文件 (在 public/assets/audio/ 目录下, 路径已修正)
-        '/assets/audio/spin.wav', 
-        '/assets/audio/stop.wav', 
-        '/assets/audio/ui-click.wav',
-        '/assets/audio/win-big.wav', 
-        '/assets/audio/free-spin.wav', 
-        '/assets/audio/jingle-trigger.wav',
-        '/assets/audio/main.wav', 
-        '/assets/audio/win-small.wav'
+        // 音频文件 (路径 /assets/audios/ 正确)
+        '/assets/audios/spin.wav', 
+        '/assets/audios/stop.wav', 
+        '/assets/audios/ui-click.wav',
+        '/assets/audios/win-big.wav', 
+        '/assets/audios/free-spin.wav', 
+        '/assets/audios/jingle-trigger.wav',
+        '/assets/audios/main.wav', 
+        '/assets_audios/win-small.wav'
     ],
     preloadedAssets: new Map(),
 
@@ -48,9 +45,8 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     });
-                    // 修正: 即使音频加载失败，也 resolve，防止预加载器卡死
                     audio.addEventListener('error', () => {
-                        console.error('Audio load failed (continuing preloader):', url);
+                        console.error('Audio load failed (continuing):', url);
                         onProgress(++loaded, total);
                         resolve(); 
                     });
@@ -62,9 +58,8 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     };
-                    // 修正: 即使图片加载失败，也 resolve，防止预加载器卡死
                     img.onerror = () => {
-                        console.error('Image load failed (404 likely, continuing preloader):', url);
+                        console.error('Image load failed (continuing):', url);
                         onProgress(++loaded, total);
                         resolve(); 
                     };
