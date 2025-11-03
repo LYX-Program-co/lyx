@@ -18,11 +18,21 @@ body {
 }
 #preloader img { width: 300px; }
 
+/* --- 冰妹: 重构游戏容器以强制 16:9 比例 --- */
 #game-container {
     position: relative;
-    width: 90vw;
-    max-width: 1200px;
-    aspect-ratio: 16 / 9;
+    /* 自动计算：
+      1. 宽度 100% 视窗宽度，高度按 16:9 比例计算
+      2. 但高度不能超过 100% 视窗高度
+      3. 宽度也不能超过按 100% 高度反推的 16:9 宽度
+      这确保它始终完美贴合屏幕
+    */
+    width: 100vw;
+    height: calc(100vw * 9 / 16);
+    max-height: 100vh;
+    max-width: calc(100vh * 16 / 9);
+    margin: auto; /* 自动居中 */
+    
     background-size: cover;
     background-position: center;
     border: 2px solid #fff;
@@ -30,6 +40,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
 }
+/* --- 重构结束 --- */
 
 #reel-grid {
     position: relative;
