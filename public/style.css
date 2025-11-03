@@ -8,6 +8,7 @@ body {
     align-items: center;
     height: 100vh;
     overflow: hidden;
+    perspective: 1000px; /* 全局3D透视，增强深度感 */
 }
 
 #preloader {
@@ -39,6 +40,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transform-style: preserve-3d; /* 启用3D渲染 */
 }
 /* --- 重构结束 --- */
 
@@ -51,6 +53,8 @@ body {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid #555;
     overflow: hidden;
+    perspective: 800px; /* 3D透视：卷轴像从屏幕弹出 */
+    transform-style: preserve-3d;
 }
 
 .reel {
@@ -58,11 +62,13 @@ body {
     height: 100%;
     border-right: 1px solid #333;
     overflow: hidden;
+    transform-style: preserve-3d; /* 每个卷轴3D */
 }
 .reel:last-child { border: none; }
 
 .symbol-strip {
     width: 100%;
+    transform-style: preserve-3d; /* 符号带3D */
 }
 
 .symbol {
@@ -71,6 +77,14 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     image-rendering: -webkit-optimize-contrast;
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease; /* hover翻转 */
+    /* 基础3D倾斜：轻微rotateX，让符号有深度 */
+    transform: rotateX(10deg) translateZ(20px);
+}
+
+.symbol:hover {
+    transform: rotateY(180deg) rotateX(10deg) translateZ(50px); /* 高级hover：3D翻转 */
 }
 
 #win-line-canvas {
@@ -80,6 +94,8 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    /* 辉光线条：金色渐变 */
+    filter: drop-shadow(0 0 10px #ffd700);
 }
 
 #status-bar {
@@ -115,6 +131,28 @@ body {
     cursor: not-allowed;
 }
 
+/* --- 新增：满屏粒子层（超爆特效） --- */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    background: transparent;
+}
+
+/* 震动效果 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake { animation: shake 0.5s ease-in-out; }
+
+/* 全屏辉光（BigWin/FreeSpins） */
 #effects-layer {
     position: absolute;
     top: 10%;
@@ -132,9 +170,13 @@ body {
     max-width: 100%;
     max-height: 100%;
     animation: fadeInOut 7s ease;
+    filter: drop-shadow(0 0 20px #ffd700); /* 金色辉光 */
+    transform: scale(1.2) rotateY(360deg); /* 3D旋转 */
 }
 
 @keyframes fadeInOut {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    10%, 90% { opacity: 1; transform: scale(1); }
+    0%, 100% { opacity: 0; transform: scale(0.5) rotateY(0deg); }
+    10%, 90% { opacity: 1; transform: scale(1.2) rotateY(180deg); }
 }
+
+/* --- 新增结束 --- */
