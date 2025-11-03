@@ -6,7 +6,7 @@ const Preloader = {
         '/assets/500.png', 
         '/assets/501.png',
 
-        // 卷轴符号图片 (已移除 108, 109, 110)
+        // 卷轴符号图片 (已确认 100-107, 300-302)
         '/assets/symbols/100.png', 
         '/assets/symbols/101.png', 
         '/assets/symbols/102.png',
@@ -15,12 +15,11 @@ const Preloader = {
         '/assets/symbols/105.png', 
         '/assets/symbols/106.png', 
         '/assets/symbols/107.png', 
-        // 108, 109, 110 已被删除
         '/assets/symbols/300.png',
         '/assets/symbols/301.png',
         '/assets/symbols/302.png',
         
-        // 音频文件 (路径 /assets/audios/ 正确)
+        // 音频文件 (路径 /assets/audios/ )
         '/assets/audios/spin.wav', 
         '/assets/audios/stop.wav', 
         '/assets/audios/ui-click.wav',
@@ -28,7 +27,7 @@ const Preloader = {
         '/assets/audios/free-spin.wav', 
         '/assets/audios/jingle-trigger.wav',
         '/assets/audios/main.wav', 
-        '/assets_audios/win-small.wav'
+        '/assets/audios/win-small.wav' // 路径已从 _audios 修正
     ],
     preloadedAssets: new Map(),
 
