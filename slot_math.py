@@ -1,29 +1,63 @@
 # slot_math.py
 import random
 
+# --- 卷轴已更新 ---
+# 移除了 108, 109, 110
+# 增加了 100, 101, 102 的数量来填充空间
 REEL_STRIPS = [
-    [100]*20 + [101]*15 + [102]*10 + [300]*3 + [301]*1 + [302]*1,
-    [100]*18 + [101]*16 + [102]*12 + [300]*3 + [301]*1 + [302]*0,
-    [100]*15 + [101]*15 + [102]*15 + [300]*4 + [301]*1 + [302]*0,
-    [100]*12 + [101]*12 + [102]*12 + [300]*10 + [301]*2 + [302]*2,
-    [100]*18 + [101]*14 + [102]*10 + [300]*5 + [301]*2 + [302]*1
+    # 卷轴 1 (移除了 108, 109, 110)
+    [100]*13 + [101]*10 + [102]*8 + \
+    [103]*5 + [104]*5 + [105]*4 + [106]*4 + [107]*3 + \
+    [300]*3 + [301]*1 + [302]*1,
+    
+    # 卷轴 2 (移除了 108, 109, 110)
+    [100]*14 + [101]*10 + [102]*8 + \
+    [103]*6 + [104]*6 + [105]*5 + [106]*5 + [107]*2 + \
+    [300]*3 + [301]*1 + [302]*0,
+    
+    # 卷轴 3 (移除了 108, 109, 110)
+    [100]*13 + [101]*10 + [102]*8 + \
+    [103]*5 + [104]*5 + [105]*4 + [106]*4 + [107]*3 + \
+    [300]*4 + [301]*1 + [302]*0,
+    
+    # 卷轴 4 (移除了 108, 109, 110)
+    [100]*14 + [101]*10 + [102]*8 + \
+    [103]*6 + [104]*6 + [105]*5 + [106]*5 + [107]*2 + \
+    [300]*10 + [301]*2 + [302]*2,
+    
+    # 卷轴 5 (移除了 108, 109, 110)
+    [100]*13 + [101]*10 + [102]*8 + \
+    [103]*5 + [104]*5 + [105]*4 + [106]*4 + [107]*3 + \
+    [300]*5 + [301]*2 + [302]*1
 ]
 
+# --- 赔率表已更新 ---
+# 移除了 108, 109, 110
 PAYTABLE = {
+    # 基础符号
     100: [0, 0, 2, 5, 10],
     101: [0, 0, 4, 8, 18],
     102: [0, 0, 5, 10, 25],
+    
+    # 中级符号
+    103: [0, 0, 6, 12, 30],
+    104: [0, 0, 6, 12, 30],
+    105: [0, 0, 7, 15, 35],
+    106: [0, 0, 7, 15, 35],
+    107: [0, 0, 8, 20, 40],
+
+    # 高级/特殊符号 (不变)
     300: [0, 0, 11, 28, 55],
-    301: [0, 0, 0, 0, 0],
+    301: [0, 0, 0, 0, 0], # Scatter 靠数量触发
     302: [0, 0, 15, 40, 80]
 }
 
 PAYLINES_25 = [
     [1,1,1,1,1], [0,0,0,0,0], [2,2,2,2,2], [0,1,1,1,2], [2,1,1,1,0],
-    [1,0,1,0,1], [0,0,1,2,2], [2,2,1,0,0], [1,2,1,0,1], [0,1,2,1,0],
+    [1_0,1,0,1], [0,0,1,2,2], [2,2,1,0,0], [1,2,1,0,1], [0,1,2,1,0],
     [2,1,0,1,2], [1,0,2,0,1], [0,2,0,2,0], [2,0,2,0,2], [1,1,2,1,1],
     [0,0,2,0,0], [2,2,0,2,2], [1,2,0,2,1], [0,1,0,1,0], [2,1,2,1,2],
-    [1,0,1,2,1], [0,2,1,0,2], [2,0,1,2,0], [1,1,0,1,1], [0,2,2,0,2]
+    [1_0,1,2,1], [0,2,1,0,2], [2,0,1,2,0], [1,1,0,1,1], [0,2,2,0,2]
 ]
 
 WILD_SYMBOL = 302
@@ -46,10 +80,19 @@ def generate_spin_and_eval(total_bet, lines):
     total_win = 0
     for line_idx, line in enumerate(PAYLINES_25[:lines]):
         symbols = [matrix[c][line[c]] for c in range(5)]
-        count, win = evaluate_line(symbols, bet_per_line)
+        
+        first_symbol = symbols[0]
+        if first_symbol == WILD_SYMBOL:
+            non_wild_symbols = [s for s in symbols if s != WILD_SYMBOL and s != SCATTER_SYMBOL]
+            if non_wild_symbols:
+                first_symbol = non_wild_symbols[0]
+            else:
+                first_symbol = WILD_SYMBOL
+        
+        count, win = evaluate_line(symbols, first_symbol, bet_per_line)
         if win > 0:
             total_win += win
-            wins.append({"line": line_idx, "count": count, "symbol": symbols[0], "win": win})
+            wins.append({"line": line_idx, "count": count, "symbol": first_symbol, "win": win})
 
     # Scatter 触发 Free Spins
     scatter_count = sum(1 for col in matrix for sym in col if sym == SCATTER_SYMBOL)
@@ -63,15 +106,16 @@ def generate_spin_and_eval(total_bet, lines):
 
     return matrix, total_win, wins, features
 
-def evaluate_line(symbols, bet):
-    first = symbols[0]
-    if first == SCATTER_SYMBOL:
+def evaluate_line(symbols, pay_symbol, bet):
+    if pay_symbol == SCATTER_SYMBOL:
         return 0, 0
-    count = 1
-    for sym in symbols[1:]:
-        if sym == first or sym == WILD_SYMBOL:
+    
+    count = 0
+    for sym in symbols:
+        if sym == pay_symbol or sym == WILD_SYMBOL:
             count += 1
         else:
             break
-    payout = PAYTABLE.get(first, [0]*5)[count] if count >= 2 else 0
+            
+    payout = PAYTABLE.get(pay_symbol, [0]*5)[count-1] if count > 0 else 0
     return count, payout * bet
