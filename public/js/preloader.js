@@ -1,12 +1,12 @@
 const Preloader = {
     ASSET_LIST: [
-        // 核心图片
+        // 核心图片 (4 张)
         '/assets/8888.png', 
         '/assets/9999.png', 
         '/assets/500.png', 
         '/assets/501.png',
 
-        // 卷轴符号图片 (已确认为 11 个: 100-107, 300-302)
+        // 卷轴符号 (11 张)
         '/assets/symbols/100.png', 
         '/assets/symbols/101.png', 
         '/assets/symbols/102.png',
@@ -19,15 +19,17 @@ const Preloader = {
         '/assets/symbols/301.png',
         '/assets/symbols/302.png',
         
-        // 音频文件 (路径 /assets/audios/ 已确认)
+        // --- 已添加 BGM: 必须要有音乐 ---
+        '/assets/audios/main.wav', // BGM (背景音乐)
+        
+        // 音效 (5 个)
         '/assets/audios/spin.wav', 
         '/assets/audios/stop.wav', 
         '/assets/audios/ui-click.wav',
         '/assets/audios/win-big.wav', 
-        '/assets/audios/free-spin.wav', 
-        '/assets/audios/jingle-trigger.wav',
-        '/assets/audios/main.wav', 
-        '/assets/audios/win-small.wav' // 路径已修正
+        '/assets/audios/free-spin.wav',
+        
+        // (jingle-trigger.wav 和 win-small.wav 仍未被使用，保持移除)
     ],
     preloadedAssets: new Map(),
 
@@ -44,7 +46,6 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     });
-                    // 容错处理：即使音频加载失败也继续，防止卡死
                     audio.addEventListener('error', () => {
                         console.error('Audio load failed (continuing):', url);
                         onProgress(++loaded, total);
@@ -58,7 +59,6 @@ const Preloader = {
                         onProgress(++loaded, total);
                         resolve();
                     };
-                    // 容错处理：即使图片加载失败也继续
                     img.onerror = () => {
                         console.error('Image load failed (continuing):', url);
                         onProgress(++loaded, total);
