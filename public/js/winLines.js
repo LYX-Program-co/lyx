@@ -23,7 +23,11 @@ const WinLines = {
         WinLines.symbolHeight = WinLines.canvas.height / 3;
     },
 
-    clearLines: () => WinLines.ctx.clearRect(0, 0, WinLines.canvas.width, WinLines.canvas.height),
+    clearLines: () => {
+        // 清除winning类
+        document.querySelectorAll('.symbol').forEach(sym => sym.classList.remove('winning'));
+        WinLines.ctx.clearRect(0, 0, WinLines.canvas.width, WinLines.canvas.height);
+    },
 
     drawLines: (wins) => {
         if (!wins?.length) return;
@@ -31,6 +35,19 @@ const WinLines = {
         WinLines.ctx.lineWidth = 5;
         wins.forEach(w => {
             const coords = WinLines.PAYLINE_COORDS[w.line];
+            // 高亮胜线符号：添加winning类
+            for (let i = 0; i < w.count; i++) {
+                const reelId = `reel${i}`;
+                const reel = document.getElementById(reelId);
+                const strip = reel.querySelector('.symbol-strip');
+                const visibleSymbols = strip.children.slice(-3); // 最后3个可见
+                const row = coords[i]; // 0=顶,1=中,2=底
+                if (visibleSymbols[row]) {
+                    visibleSymbols[row].classList.add('winning');
+                }
+            }
+
+            // 绘制线条
             WinLines.ctx.beginPath();
             for (let i = 0; i < w.count; i++) {
                 const x = i * WinLines.symbolWidth + WinLines.symbolWidth / 2;
