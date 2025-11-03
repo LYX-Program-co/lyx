@@ -19,20 +19,14 @@ body {
 }
 #preloader img { width: 300px; }
 
-/* --- 冰妹: 重构游戏容器以强制 16:9 比例 --- */
+/* --- 游戏容器 (16:9比例) --- */
 #game-container {
     position: relative;
-    /* 自动计算：
-      1. 宽度 100% 视窗宽度，高度按 16:9 比例计算
-      2. 但高度不能超过 100% 视窗高度
-      3. 宽度也不能超过按 100% 高度反推的 16:9 宽度
-      这确保它始终完美贴合屏幕
-    */
     width: 100vw;
     height: calc(100vw * 9 / 16);
     max-height: 100vh;
     max-width: calc(100vh * 16 / 9);
-    margin: auto; /* 自动居中 */
+    margin: auto;
     
     background-size: cover;
     background-position: center;
@@ -42,7 +36,6 @@ body {
     justify-content: space-between;
     transform-style: preserve-3d; /* 启用3D渲染 */
 }
-/* --- 重构结束 --- */
 
 #reel-grid {
     position: relative;
@@ -63,30 +56,69 @@ body {
     border-right: 1px solid #333;
     overflow: hidden;
     transform-style: preserve-3d; /* 每个卷轴3D */
+    display: flex;
+    flex-direction: column-reverse; /* 反向列：从下往上滚动 */
 }
 .reel:last-child { border: none; }
 
 .symbol-strip {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    transform-style: preserve-3d; /* 符号带3D */
+    transform-style: preserve-3d;
+    transition: none; /* 初始无动画 */
 }
 
 .symbol {
     width: 100%;
+    height: calc(100% / 3); /* 3个可见符号 */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     image-rendering: -webkit-optimize-contrast;
     transform-style: preserve-3d;
-    transition: transform 0.2s ease; /* hover翻转 */
-    /* 基础3D倾斜：轻微rotateX，让符号有深度 */
+    transition: transform 0.2s ease, filter 0.3s ease;
+    /* 基础3D倾斜 */
     transform: rotateX(10deg) translateZ(20px);
+    /* 滚动时模糊+辉光 */
+    filter: blur(0px) drop-shadow(0 0 5px rgba(255,255,255,0.3));
+}
+
+.symbol.spinning {
+    filter: blur(2px) drop-shadow(0 0 10px #ffd700); /* 滚动模糊+金光 */
+    animation: symbol-rotate 0.5s linear infinite; /* 每个符号微旋转 */
+}
+
+.symbol.winning {
+    transform: rotateY(360deg) scale(1.2) translateZ(100px); /* 赢线符号爆炸翻转 */
+    filter: drop-shadow(0 0 20px #ff0000);
 }
 
 .symbol:hover {
-    transform: rotateY(180deg) rotateX(10deg) translateZ(50px); /* 高级hover：3D翻转 */
+    transform: rotateY(180deg) rotateX(10deg) translateZ(50px); /* hover 3D翻转 */
 }
 
+/* --- 新增：符号旋转keyframes (核心特效) --- */
+@keyframes symbol-rotate {
+    0% { transform: rotateY(0deg) rotateX(10deg) translateZ(20px); }
+    100% { transform: rotateY(360deg) rotateX(10deg) translateZ(20px); }
+}
+
+/* 卷轴滚动keyframes：长距离+缓动 */
+@keyframes reel-spin {
+    0% {
+        transform: translateY(0) rotateX(0deg) translateZ(0px); /* 起始 */
+    }
+    100% {
+        transform: translateY(var(--final-offset)) rotateX(5deg) translateZ(50px); /* 目标 + 3D倾斜 */
+    }
+}
+
+.reel .spinning {
+    animation: reel-spin 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; /* 物理缓动，保持结束状态 */
+}
+
+/* 胜线canvas辉光 */
 #win-line-canvas {
     position: absolute;
     top: 0;
@@ -94,7 +126,6 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    /* 辉光线条：金色渐变 */
     filter: drop-shadow(0 0 10px #ffd700);
 }
 
@@ -131,7 +162,7 @@ body {
     cursor: not-allowed;
 }
 
-/* --- 新增：满屏粒子层（超爆特效） --- */
+/* 满屏粒子层 */
 #particles-canvas {
     position: fixed;
     top: 0;
@@ -152,7 +183,7 @@ body {
 
 .shake { animation: shake 0.5s ease-in-out; }
 
-/* 全屏辉光（BigWin/FreeSpins） */
+/* 效果层辉光 */
 #effects-layer {
     position: absolute;
     top: 10%;
@@ -178,5 +209,3 @@ body {
     0%, 100% { opacity: 0; transform: scale(0.5) rotateY(0deg); }
     10%, 90% { opacity: 1; transform: scale(1.2) rotateY(180deg); }
 }
-
-/* --- 新增结束 --- */
