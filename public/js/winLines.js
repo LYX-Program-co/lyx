@@ -35,12 +35,15 @@ const WinLines = {
         WinLines.ctx.lineWidth = 5;
         wins.forEach(w => {
             const coords = WinLines.PAYLINE_COORDS[w.line];
-            // 高亮胜线符号：添加winning类
+            // 修复：高亮当前可见的3行符号（基于当前strip transform，近似取最后/前3个调整）
             for (let i = 0; i < w.count; i++) {
                 const reelId = `reel${i}`;
                 const reel = document.getElementById(reelId);
                 const strip = reel.querySelector('.symbol-strip');
-                const visibleSymbols = strip.children.slice(-3); // 最后3个可见
+                const allSymbols = Array.from(strip.children);
+                // 近似：假设可见是中间3个，基于offset计算（简化：取总长-3到总长）
+                const visibleStart = allSymbols.length - 3;
+                const visibleSymbols = allSymbols.slice(visibleStart, visibleStart + 3);
                 const row = coords[i]; // 0=顶,1=中,2=底
                 if (visibleSymbols[row]) {
                     visibleSymbols[row].classList.add('winning');
