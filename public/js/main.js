@@ -4,9 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDown = document.getElementById('btn-bet-down');
     let spinning = false;
 
-    // --- 新增：初始化粒子系统 ---
-    Particles.init();
-    // --- 新增结束 ---
+    Particles.init(); // 粒子初始化
 
     async function init() {
         const status = document.getElementById('loading-status');
@@ -26,48 +24,37 @@ document.addEventListener('DOMContentLoaded', () => {
         Reel.init(); 
         WinLines.init();
         
-        // --- 新增：启动背景音乐 ---
         AudioManager.playLoop('main');
-        // --- 新增结束 ---
     }
 
     btnSpin.addEventListener('click', async () => {
         if (spinning) return;
         spinning = true; lock(true); AudioManager.play('spin');
         
-        // --- 新增：spin开始，满屏粒子喷射（金币爆炸） ---
-        Particles.explode('gold', 100); // 100个金币粒子
-        // --- 新增结束 ---
+        Particles.explode('gold', 100); // 金币粒子
 
         WinLines.clearLines();
         const res = await API.postSpin(GameState.betPerLine, GameState.lines);
         if (!res) { spinning = false; lock(false); return; }
         GameState.updateFromServer(res); GameState.setWin(res.winAmount);
         await Reel.spinAnimation(res.matrix);
-        WinLines.drawLines(res.wins);
+        WinLines.drawLines(res.wins); // 这会触发winning类
         res.featuresTriggered?.forEach(f => {
             if (f.type === 'BigWin') { 
                 AudioManager.play('win-big'); 
                 show('effect-big-win', 7000);
-                // --- 新增：BigWin超爆特效 ---
-                Particles.explode('fireworks', 200); // 烟花满屏
-                document.body.classList.add('shake'); // 屏幕震动
+                Particles.explode('fireworks', 200);
+                document.body.classList.add('shake');
                 setTimeout(() => document.body.classList.remove('shake'), 1000);
-                // --- 新增结束 ---
             }
             if (f.type === 'FreeSpins') { 
                 AudioManager.play('free-spin'); 
                 show('effect-free-spins', 5000);
-                // --- 新增：FreeSpins辉光粒子 ---
-                Particles.explode('stars', 150); // 星星粒子
-                // --- 新增结束 ---
+                Particles.explode('stars', 150);
             }
         });
 
-        // --- 新增：spin结束，残留粒子淡出 ---
         setTimeout(() => Particles.clear(), 3000);
-        // --- 新增结束 ---
-
         spinning = false; lock(false);
     });
 
