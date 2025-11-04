@@ -31,8 +31,13 @@ body, html {
 /* --- 游戏主容器 (16:9 布局) --- */
 #game-container {
     position: relative;
-    width: 100vw;
-    height: 100vh; /* 强制占满横屏 */
+    /* * 核心修正：
+     * "100vw" (视口宽度) 更改为 "100%"
+     * "100vh" (视口高度) 更改为 "100%"
+     * 这将确保它 100% 继承 body 和 html 的尺寸，消除黑边。
+     */
+    width: 100%;
+    height: 100%; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -44,9 +49,7 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    /* * * 核心修正：
-     * 路径已从 'images/9999.png' 更改为 '9999.png' (主目录)
-     */
+    /* 路径已在 V3 中修正为 '9999.png' */
     background-image: url('9999.png');
     background-size: cover;
     background-position: center;
@@ -64,7 +67,7 @@ body, html {
     background: rgba(0,0,0,0.3); /* 临时 */
     
     position: relative;
-    z-index: 2; /* (z-index 已在 V2 中修正) */
+    z-index: 2; 
 }
 .logo {
     width: 200px; /* 假设值 */
@@ -90,7 +93,7 @@ body, html {
     align-items: center;
     
     position: relative;
-    z-index: 2; /* (z-index 已在 V2 中修正) */
+    z-index: 2; 
 }
 #reels-container {
     display: grid;
@@ -140,7 +143,7 @@ body, html {
     padding: 0 1%;
     
     position: relative;
-    z-index: 2; /* (z-index 已在 V2 中修正) */
+    z-index: 2; 
 }
 
 .info-group {
