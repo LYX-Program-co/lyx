@@ -1,0 +1,220 @@
+/* --- 基础设置 (强制横屏) --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+    background: #000;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- 加载界面 --- */
+#loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000 url('images/8888.png') no-repeat center center;
+    background-size: cover;
+    z-index: 100;
+}
+
+/* --- 游戏主容器 (16:9 布局) --- */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh; /* 强制占满横屏 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.game-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/9999.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+/* --- 顶部信息 (参考图) --- */
+.top-bar {
+    width: 100%;
+    height: 10%; /* 占屏幕高度 10% */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2%;
+    background: rgba(0,0,0,0.3); /* 临时 */
+}
+.logo {
+    width: 200px; /* 假设值 */
+    height: 90%;
+    background: url('images/logo_placeholder.png') no-repeat center center; /* 替换为 Logo */
+    background-size: contain;
+}
+.jackpot-display {
+    text-align: right;
+    color: #FFD700;
+}
+.jackpot-title { font-size: 1.5vh; }
+#jackpot-value { font-size: 5vh; font-weight: bold; }
+
+/* --- 游戏核心区 (5x3 转轴) --- */
+#slot-machine {
+    position: relative;
+    width: 70%; /* 转轴区域占屏幕宽 70% */
+    height: 65%; /* 占屏幕高 65% */
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#reels-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.5); /* 临时转轴背景 */
+    border: 3px solid #FFD700;
+    border-radius: 10px;
+}
+.reel {
+    height: 100%;
+    overflow: hidden;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #555;
+    /* JS 将添加 .spinning 模糊 */
+}
+.reel.spinning {
+    filter: blur(5px);
+}
+.reel .symbol {
+    width: 100%;
+    height: 33.33%; /* 3个符号占满 */
+    object-fit: contain;
+}
+
+/* 中奖线画布 */
+#win-lines-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* --- 底部控制区 (参考图) --- */
+#controls-panel {
+    width: 100%;
+    height: 25%; /* 占屏幕高 25% */
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1%;
+}
+
+.info-group {
+    flex-basis: 25%;
+    font-size: 2.5vh;
+}
+.control-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.line-control, .bet-control {
+    flex-basis: 25%;
+}
+.spin-group {
+    flex-basis: 20%;
+}
+
+.control-btn {
+    border: none;
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+    height: 10vh; /* 按钮高度 */
+    width: 10vh; /* 按钮宽度 */
+}
+.control-btn:active {
+    transform: scale(0.9);
+}
+
+/* 按钮图片 */
+#line-minus { background-image: url('images/607.png'); }
+#line-plus { background-image: url('images/606.png'); }
+#bet-minus { background-image: url('images/601.png'); }
+#bet-plus { background-image: url('images/600.png'); }
+#spin-button { background-image: url('images/602.png'); height: 15vh; width: 15vh; }
+#auto-spin-button { background-image: url('images/603.png'); }
+
+/* 显示框 */
+.display-box {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 8vh;
+    width: 12vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3vh;
+    font-weight: bold;
+    color: #FFD700;
+    margin: 0 1vh;
+}
+#line-display { background-image: url('images/604.png'); }
+#bet-display { background-image: url('images/605.png'); }
+
+/* --- 特效 --- */
+#effect-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    animation: fadeInOut 7s forwards;
+}
+#effect-overlay img {
+    width: 80%;
+    max-width: 800px;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: scale(0.5); }
+    10% { opacity: 1; transform: scale(1.1); }
+    90% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.5); }
+}
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
+}

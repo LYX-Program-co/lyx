@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LYX Slot Game</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LYX Slot">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loading-screen">
+        </div>
+
+    <div id="game-container" class="hidden">
+        <div class="game-background"></div>
+
+        <div class="top-bar">
+            <div class="logo"></div>
+            <div class="jackpot-display">
+                <span class="jackpot-title">JACKPOT</span>
+                <span id="jackpot-value">121.00</span>
+            </div>
+        </div>
+
+        <div id="slot-machine">
+            <div id="reels-container">
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+                <div class="reel"></div>
+            </div>
+            <canvas id="win-lines-canvas"></canvas>
+        </div>
+
+        <div id="controls-panel">
+            <div class="info-group">
+                <div class="info-box">余额: <span id="balance-display">1000.00</span></div>
+                <div class="info-box">中奖: <span id="win-display">0.00</span></div>
+                <div class="info-box">总押注: <span id="total-bet-display">1.25</span></div>
+            </div>
+            
+            <div class="control-group line-control">
+                <button id="line-minus" class="control-btn line-btn"></button>
+                <div id="line-display" class="display-box">
+                    <span id="line-value">25</span>
+                </div>
+                <button id="line-plus" class="control-btn line-btn"></button>
+            </div>
+
+            <div class="control-group bet-control">
+                <button id="bet-minus" class="control-btn bet-btn"></button>
+                <div id="bet-display" class="display-box">
+                    <span id="bet-value">0.05</span>
+                </div>
+                <button id="bet-plus" class="control-btn bet-btn"></button>
+            </div>
+
+            <div class="control-group spin-group">
+                <button id="spin-button" class="control-btn spin-btn"></button>
+                <button id="auto-spin-button" class="control-btn auto-btn"></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="effect-overlay" class="hidden">
+        <img id="effect-image" src="" alt="Effect">
+    </div>
+
+    <audio id="audio-main" src="audios/main.wav" loop></audio>
+    <audio id="audio-free-spin" src="audios/free-spin.wav"></audio>
+    <audio id="audio-spin" src="audios/spin.wav"></audio>
+    <audio id="audio-stop" src="audios/stop.wav"></audio>
+    <audio id="audio-win-big" src="audios/win-big.wav"></audio>
+    <audio id="audio-win-small" src="audios/win-small.wav"></audio>
+    <audio id="audio-reel-stop" src="audios/ui-click.wav"></audio>
+
+    <script src="game.js"></script>
+</body>
+</html>
