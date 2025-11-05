@@ -1,234 +1,40 @@
-/* --- 基础设置 (强制横屏) --- */
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    color: white;
-    background: #000;
-    user-select: none;
-    -webkit-user-select: none;
-}
+/* 龍少核彈版 CSS */
+body, html { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; font-family:Arial; color:#FFD700; user-select:none; }
+.hidden { display:none !important; }
 
-.hidden {
-    display: none !important;
-}
+#loading-screen { position:fixed; inset:0; background:#000 url('images/8888.png') center/cover; z-index:999; }
 
-/* --- 加载界面 --- */
-#loading-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000 url('images/8888.png') no-repeat center center;
-    background-size: cover;
-    z-index: 100;
-}
+#game-container { width:100vw; height:100vh; display:flex; flex-direction:column; justify-content:space-between; position:relative; }
+.game-background { position:absolute; inset:0; background:url('images/9999.png') center/cover; z-index:-1; }
 
-/* --- 游戏主容器 (16:9 布局) --- */
-#game-container {
-    position: relative;
-    /* * 核心修正：
-     * "100vw" (视口宽度) 更改为 "100%"
-     * "100vh" (视口高度) 更改为 "100%"
-     * 这将确保它 100% 继承 body 和 html 的尺寸，消除黑边。
-     */
-    width: 100%;
-    height: 100%; 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+.top-bar { height:10vh; display:flex; justify-content:space-between; align-items:center; padding:0 2%; background:rgba(0,0,0,0.5); }
+.logo { width:200px; height:90%; background:url('images/logo.png') center/contain no-repeat; }
+#jackpot-value { font-size:6vh; font-weight:900; text-shadow:0 0 20px gold; }
 
-.game-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* 路径已在 V3 中修正为 '9999.png' */
-    background-image: url('9999.png');
-    background-size: cover;
-    background-position: center;
-    z-index: 1; /* (z-index 已在 V2 中修正) */
-}
+#slot-machine { width:90vw; height:65vh; margin:auto; position:relative; }
+#reels-container { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; height:100%; padding:10px; background:rgba(0,0,0,0.7); border:4px solid gold; border-radius:15px; }
+.reel { overflow-y:auto !important; scrollbar-width:none; background:rgba(0,0,0,0.4); border:2px solid #333; border-radius:8px; }
+.reel::-webkit-scrollbar { display:none; }
+.reel.spinning { filter:blur(6px); }
+.reel .symbol { width:100%; height:33.33%; object-fit:contain; }
 
-/* --- 顶部信息 (参考图) --- */
-.top-bar {
-    width: 100%;
-    height: 10%; /* 占屏幕高度 10% */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2%;
-    background: rgba(0,0,0,0.3); /* 临时 */
-    
-    position: relative;
-    z-index: 2; 
-}
-.logo {
-    width: 200px; /* 假设值 */
-    height: 90%;
-    background: url('images/logo_placeholder.png') no-repeat center center; /* 替换为 Logo */
-    background-size: contain;
-}
-.jackpot-display {
-    text-align: right;
-    color: #FFD700;
-}
-.jackpot-title { font-size: 1.5vh; }
-#jackpot-value { font-size: 5vh; font-weight: bold; }
+#win-lines-canvas { position:absolute; inset:0; pointer-events:none; z-index:10; }
 
-/* --- 游戏核心区 (5x3 转轴) --- */
-#slot-machine {
-    position: relative;
-    width: 70%; /* 转轴区域占屏幕宽 70% */
-    height: 65%; /* 占屏幕高 65% */
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    position: relative;
-    z-index: 2; 
-}
-#reels-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-    background: rgba(0,0,0,0.5); /* 临时转轴背景 */
-    border: 3px solid #FFD700;
-    border-radius: 10px;
-}
-.reel {
-    height: 100%;
-    overflow: hidden;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid #555;
-}
-.reel.spinning {
-    filter: blur(5px);
-}
-.reel .symbol {
-    width: 100%;
-    height: 33.33%; /* 3个符号占满 */
-    object-fit: contain;
-}
+#controls-panel { height:25vh; background:linear-gradient(180deg, #111, #000); display:flex; justify-content:space-around; align-items:center; padding:0 2%; }
+.display-box { background:no-repeat center/contain; width:14vh; height:9vh; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:3.5vh; color:gold; text-shadow:0 0 10px gold; }
+.control-btn { background:no-repeat center/contain; width:11vh; height:11vh; cursor:pointer; transition:.1s; }
+.control-btn:active { transform:scale(0.88); }
+#spin-button { width:16vh; height:16vh; }
 
-/* 中奖线画布 */
-#win-lines-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
+#line-minus { background-image:url('images/607.png'); }
+#line-plus  { background-image:url('images/606.png'); }
+#bet-minus  { background-image:url('images/601.png'); }
+#bet-plus   { background-image:url('images/600.png'); }
+#spin-button { background-image:url('images/602.png'); }
+#auto-spin-button { background-image:url('images/603.png'); }
+#line-display { background-image:url('images/604.png'); }
+#bet-display  { background-image:url('images/605.png'); }
 
-/* --- 底部控制区 (参考图) --- */
-#controls-panel {
-    width: 100%;
-    height: 25%; /* 占屏幕高 25% */
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1%;
-    
-    position: relative;
-    z-index: 2; 
-}
-
-.info-group {
-    flex-basis: 25%;
-    font-size: 2.5vh;
-}
-.control-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.line-control, .bet-control {
-    flex-basis: 25%;
-}
-.spin-group {
-    flex-basis: 20%;
-}
-
-.control-btn {
-    border: none;
-    background-color: transparent;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    transition: transform 0.1s;
-    height: 10vh; /* 按钮高度 */
-    width: 10vh; /* 按钮宽度 */
-}
-.control-btn:active {
-    transform: scale(0.9);
-}
-
-/* 按钮图片 (路径保持不变) */
-#line-minus { background-image: url('images/607.png'); }
-#line-plus { background-image: url('images/606.png'); }
-#bet-minus { background-image: url('images/601.png'); }
-#bet-plus { background-image: url('images/600.png'); }
-#spin-button { background-image: url('images/602.png'); height: 15vh; width: 15vh; }
-#auto-spin-button { background-image: url('images/603.png'); }
-
-/* 显示框 (路径保持不变) */
-.display-box {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    height: 8vh;
-    width: 12vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3vh;
-    font-weight: bold;
-    color: #FFD700;
-    margin: 0 1vh;
-}
-#line-display { background-image: url('images/604.png'); }
-#bet-display { background-image: url('images/605.png'); }
-
-/* --- 特效 --- */
-#effect-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 50;
-    animation: fadeInOut 7s forwards;
-}
-#effect-overlay img {
-    width: 80%;
-    max-width: 800px;
-    animation: pulse 0.5s infinite alternate;
-}
-
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: scale(0.5); }
-    10% { opacity: 1; transform: scale(1.1); }
-    90% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(0.5); }
-}
-@keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.05); }
-}
+#effect-overlay { position:fixed; inset:0; display:flex; justify-content:center; align-items:center; z-index:999; background:rgba(0,0,0,0.8); }
+#effect-overlay img { max-width:90%; animation:pulse 0.6s infinite alternate; }
+@keyframes pulse { to { transform:scale(1.06); } }
