@@ -3,20 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>LYX Slot Game</title>
-    
+    <title>LYX Slot · 龍少專屬</title>
     <link rel="manifest" href="manifest.json">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LYX Slot">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="loading-screen">
-        </div>
+    <div id="loading-screen"></div>
 
     <div id="game-container" class="hidden">
         <div class="game-background"></div>
@@ -24,43 +18,33 @@
         <div class="top-bar">
             <div class="logo"></div>
             <div class="jackpot-display">
-                <span class="jackpot-title">JACKPOT</span>
-                <span id="jackpot-value">121.00</span>
+                <span class="jackpot-title">龍少帝國</span>
+                <span id="jackpot-value">999,999,999.00</span>
             </div>
         </div>
 
         <div id="slot-machine">
-            <div id="reels-container">
-                <div class="reel"></div>
-                <div class="reel"></div>
-                <div class="reel"></div>
-                <div class="reel"></div>
-                <div class="reel"></div>
-            </div>
+            <div id="reels-container"></div>
             <canvas id="win-lines-canvas"></canvas>
         </div>
 
         <div id="controls-panel">
             <div class="info-group">
-                <div class="info-box">余额: <span id="balance-display">1000.00</span></div>
-                <div class="info-box">中奖: <span id="win-display">0.00</span></div>
-                <div class="info-box">总押注: <span id="total-bet-display">1.25</span></div>
+                <div class="info-box">餘額: <span id="balance-display">999999999.00</span></div>
+                <div class="info-box">中獎: <span id="win-display">0.00</span></div>
+                <div class="info-box">總押: <span id="total-bet-display">1.25</span></div>
             </div>
             
             <div class="control-group line-control">
-                <button id="line-minus" class="control-btn line-btn"></button>
-                <div id="line-display" class="display-box">
-                    <span id="line-value">25</span>
-                </div>
-                <button id="line-plus" class="control-btn line-btn"></button>
+                <button id="line-minus" class="control-btn"></button>
+                <div id="line-display" class="display-box"><span id="line-value">25</span></div>
+                <button id="line-plus" class="control-btn"></button>
             </div>
 
             <div class="control-group bet-control">
-                <button id="bet-minus" class="control-btn bet-btn"></button>
-                <div id="bet-display" class="display-box">
-                    <span id="bet-value">0.05</span>
-                </div>
-                <button id="bet-plus" class="control-btn bet-btn"></button>
+                <button id="bet-minus" class="control-btn"></button>
+                <div id="bet-display" class="display-box"><span id="bet-value">0.05</span></div>
+                <button id="bet-plus" class="control-btn"></button>
             </div>
 
             <div class="control-group spin-group">
@@ -71,9 +55,10 @@
     </div>
 
     <div id="effect-overlay" class="hidden">
-        <img id="effect-image" src="" alt="Effect">
+        <img id="effect-image" src="" alt="龍少特效">
     </div>
 
+    <!-- 音效 -->
     <audio id="audio-main" src="audios/main.wav" loop></audio>
     <audio id="audio-free-spin" src="audios/free-spin.wav"></audio>
     <audio id="audio-spin" src="audios/spin.wav"></audio>
@@ -83,5 +68,12 @@
     <audio id="audio-reel-stop" src="audios/ui-click.wav"></audio>
 
     <script src="game.js"></script>
+    <script>
+        // iOS 音频解锁 + 防闪退
+        document.body.addEventListener('touchstart', () => {
+            window.audioUnlocked = true;
+            document.body.click();
+        }, { once: true });
+    </script>
 </body>
 </html>
