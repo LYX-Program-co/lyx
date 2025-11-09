@@ -1,0 +1,13 @@
+{
+  "name": "LYX Slot · 龍少帝國",
+  "short_name": "龍少老虎機",
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "landscape-primary",
+  "background_color": "#000",
+  "theme_color": "#000",
+  "icons": [
+    { "src": "images/100.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/101.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
